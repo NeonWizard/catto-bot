@@ -1,0 +1,11 @@
+{
+	"name": "Cupcat",
+	"version": "1.0.0",
+	"description": "Cupcat bot",
+	"main": "bot.js",
+	"author": "Spooky",
+	"dependencies": {
+		"discord.io": "^2.5.3",
+		"winston": "^3.2.1"
+	}
+}
