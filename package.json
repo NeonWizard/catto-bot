@@ -4,6 +4,10 @@
 	"description": "Cupcat bot",
 	"main": "bot.js",
 	"author": "Spooky",
+	"scripts": {
+		"start": "node bot.js",
+		"start-dev": "DEVELOPMENT=true node bot.js"
+	},
 	"dependencies": {
 		"discord.js": "^11.5.1",
 		"winston": "^3.2.1"
