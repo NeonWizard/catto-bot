@@ -14,6 +14,8 @@ let config = {
 		},
 	],
 
+	developers: ["193469296557424640"],
+
 	prefix: development ? ";/" : "-",
 
 	token: ""
