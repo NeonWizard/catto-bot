@@ -1,6 +1,7 @@
 const {Client} = require("discord.js");
 const fs = require("fs");
 const path = require("path");
+const mysql = require("mysql");
 
 // -- Helper funcs
 const print = console.log;
@@ -14,10 +15,24 @@ const BotEnv = class {
 		this.config = config;
 		this.client = client;
 
+		this.dbconn = mysql.createConnection({
+			host		: 'deadtired.me',
+			user		: 'root',
+			password	: config.dbpass,
+			database	: 'discordbot'
+		});
+		this.dbconn.connect();
+
 		this.plugins = new Map();
 		this.events = new Map();
 		this.registeredEvents = new Map();
 		this.events.attach = this.attachEvent.bind(this);
+
+		this.guild_id = config.guild_id;
+		this.type_ids = config.rcs;
+
+		this.channels = {};
+		this.roles = {};
 
 		this.prepare().then(this.start.bind(this)).catch(console.error);
 	}
@@ -37,6 +52,11 @@ const BotEnv = class {
 
 	async start() {
 		await this.client.login(this.config.token);
+
+		for (const [type, name, type_id] of this.type_ids) {
+			this[type+"s"][name] = this.client.guilds.get(this.guild_id)[type+"s"].get(type_id);
+			print(`Added ${name} to the ${type}s object [${type_id}]`);
+		}
 
 		print("LOGIN COMPLETE :: Emitting 'post-ready'...");
 		this.client.emit("post-ready");
@@ -104,25 +124,3 @@ const BotEnv = class {
 new BotEnv(require("./config.js"), new Client({
 	disableEveryone: true
 }));
-
-// client.on("ready", () => {
-// 	console.log(`Logged in as ${client.user.tag}!`);
-// });
-
-// client.on("message", msg => {
-// 	// Our bot needs to know if it will execute a command
-// 	// It will listen for messages that will start with `!`
-// 	if (msg.content.substring(0, 1) == "!") {
-// 		let args = msg.content.substring(1).split(" ");
-// 		let cmd = args[0];
-
-// 		args = args.splice(1);
-// 		switch(cmd) {
-// 			// !ping
-// 			case "ping":
-// 				msg.channel.send("pong");
-// 				break;
-// 			// Just add any case commands if you want to..
-// 		 }
-// 	 }
-// });
