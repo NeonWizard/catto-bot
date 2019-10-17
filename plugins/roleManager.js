@@ -3,6 +3,7 @@ const {promisify} = require('util');
 module.exports = async function() {
 	const { client, events, dbconn, channels, guild_id, roles, config } = this;
 	const { reactRoles, rcs } = config;
+	if (config.development) return;
 
 	const cache = {
 		_queryAsync: promisify(dbconn.query).bind(dbconn),
@@ -24,7 +25,6 @@ module.exports = async function() {
 		};
 
 		const rmm = "role-manager-message";
-		// const roleChannel = client.guilds.get("597623447438491669")["channels"].get("621570239938691072");
 		const roleChannel = channels.roles;
 		let roleMessage;
 
@@ -37,19 +37,17 @@ module.exports = async function() {
 			roleMessage = false;
 		}
 
-		if (!config.development) {
-			if (roleMessage) {
-				await roleMessage.edit({embed});
-				print("Edited role manager message.");
-			} else {
-				roleMessage = await roleChannel.send({embed});
-				await cache.set(rmm, roleMessage.id);
-				print("New role manager message saved.");
-			}
+		if (roleMessage) {
+			await roleMessage.edit({embed});
+			print("Edited role manager message.");
+		} else {
+			roleMessage = await roleChannel.send({embed});
+			await cache.set(rmm, roleMessage.id);
+			print("New role manager message saved.");
+		}
 
-			for (const {rct} of reactRoles) {
-				if (!config.development) await roleMessage.react(rct);
-			}
+		for (const {rct} of reactRoles) {
+			await roleMessage.react(rct);
 		}
 
 		print("Role manager prepared.");
