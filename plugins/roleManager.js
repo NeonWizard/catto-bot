@@ -37,23 +37,27 @@ module.exports = async function() {
 			roleMessage = false;
 		}
 
-		if (roleMessage) {
-			if (!config.development) await roleMessage.edit({embed});
-			print("Edited role manager message.");
-		} else {
-			if (!config.development) roleMessage = await roleChannel.send({embed});
-			await cache.set(rmm, roleMessage.id);
-			print("New role manager message saved.");
-		}
+		if (!config.development) {
+			if (roleMessage) {
+				await roleMessage.edit({embed});
+				print("Edited role manager message.");
+			} else {
+				roleMessage = await roleChannel.send({embed});
+				await cache.set(rmm, roleMessage.id);
+				print("New role manager message saved.");
+			}
 
-		for (const {rct} of reactRoles) {
-			if (!config.development) await roleMessage.react(rct);
+			for (const {rct} of reactRoles) {
+				if (!config.development) await roleMessage.react(rct);
+			}
 		}
 
 		print("Role manager prepared.");
 	};
 
 	const reactionHandler = async (reaction, user, action) => {
+		if (user.id == client.user.id) return; // don't apply reaction roles to bot
+
 		const guild = client.guilds.get(guild_id);
 		const member = guild.members.get(user.id);
 
