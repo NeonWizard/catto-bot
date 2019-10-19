@@ -21,11 +21,11 @@ module.exports = async function() {
                 },
                 {
                     name: "Now",
-                    value: newMessage.content
+                    value: newMessage.content || "*[empty message]*"
                 },
                 {
                     name: "Previous",
-                    value: oldMessage.content
+                    value: oldMessage.content || "*[empty message]*"
                 }
             ],
             timestamp: newMessage.editedAt,
@@ -56,7 +56,7 @@ module.exports = async function() {
                 },
                 {
                     name: "Message",
-                    value: message.content
+                    value: message.content || "*[empty message]*"
                 }
             ],
             timestamp: new Date(),
