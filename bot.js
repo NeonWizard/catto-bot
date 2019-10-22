@@ -15,13 +15,12 @@ const BotEnv = class {
 		this.config = config;
 		this.client = client;
 
-		this.dbconn = mysql.createConnection({
+		this.dbconn = mysql.createPool({
 			host		: 'deadtired.me',
 			user		: 'root',
 			password	: config.dbpass,
 			database	: 'discordbot'
 		});
-		this.dbconn.connect();
 
 		this.plugins = new Map();
 		this.events = new Map();
