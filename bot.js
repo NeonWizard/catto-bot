@@ -55,7 +55,7 @@ const BotEnv = class {
 
 		for (const [type, name, type_id] of this.type_ids) {
 			this[type+"s"][name] = this.client.guilds.get(this.guild_id)[type+"s"].get(type_id);
-			print(`Added ${name} to the ${type}s object [${type_id}]`);
+			if (this.config.debug) print(`Added ${name} to the ${type}s object [${type_id}]`);
 		}
 
 		print("LOGIN COMPLETE :: Emitting 'post-ready'...");
@@ -101,7 +101,7 @@ const BotEnv = class {
             };
             this.registeredEvents.set(eventName, listener);
             this.client.on(eventName, listener);
-            print(`Event [${eventName}] loaded with [${events.length}] events attached.`)
+            if (this.config.debug) print(`Event [${eventName}] loaded with [${events.length}] events attached.`)
         });
     }
 
@@ -109,7 +109,7 @@ const BotEnv = class {
 		// Run the plugin functions so events are placed in the client object.
 		for (const [pluginName, fn] of this.plugins) try {
 			await fn.bind(this)();
-			print(`[${pluginName}] is now ready for client events.`);
+			if (this.config.debug) print(`[${pluginName}] is now ready for client events.`);
 		} catch (err) {
 			console.error(err, `Failed to ready plugin or plugin emitted an error [${pluginName}] (See above)`);
 		}
