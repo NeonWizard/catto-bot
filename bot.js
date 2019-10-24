@@ -44,6 +44,7 @@ const BotEnv = class {
 
 		await this.preparePlugins();
 		await this.readyPlugins();
+		await this.readyDatabase();
 
 		// After plugins are ready, any events that should have been attached will have been attached once you run the plugin (readyPlugins())
 		await this.readyEvents();
@@ -112,6 +113,16 @@ const BotEnv = class {
 		} catch (err) {
 			console.error(err, `Failed to ready plugin or plugin emitted an error [${pluginName}] (See above)`);
 		}
+	}
+
+	async readyDatabase() {
+		let foundModels = fs.readdirSync("./models");
+		for (const fileName of foundModels) {
+			const fn = require("./models/"+fileName);
+			const model = await fn.bind(this)();
+			this[model.name] = model;
+		}
+		this.UserModel.getByID("hey");
 	}
 
 	attachEvent(event, fn) {
