@@ -6,6 +6,7 @@ module.exports = async function() {
 		const author = oldMessage.author;
 		const channel = newMessage.channel;
 		if (author.id == client.user.id) return;
+		if (oldMessage.content == newMessage.content) return;
 
 		const embed = {
 			color: 0xefefef,
