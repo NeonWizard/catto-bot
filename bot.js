@@ -122,7 +122,6 @@ const BotEnv = class {
 			const model = await fn.bind(this)();
 			this[model.name] = model;
 		}
-		this.UserModel.getByID("hey");
 	}
 
 	attachEvent(event, fn) {
