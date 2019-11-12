@@ -20,7 +20,7 @@ module.exports = async function() {
 			description:
 				"To remove a role click the reaction again.\n*If roles don't work, try to remove and re-add the role, or contact a moderator.*\n\n" +
 				reactRoles.map(({id, rct, title, desc}) => `${rct} = <@&${id}> ${desc}`).join('\n\n') + "\n\n" +
-				"In order to get access to the NSFW channel you must agree that you:\n- Are above the age of 18\n- Read and understood <#463464079126691870>\n- Understand that you may be banned if you are caught lying\n\n" +
+				"In order to get access to the <@&525433828806885386> channel you must agree that you:\n- Are above the age of 18\n- Read and understood <#463464079126691870>\n- Understand that you may be banned if you are caught lying\n\n" +
 				"* If you understand the consequences and agree, type `i agree nsfw` in <#463857799642742794>.",
 		};
 
