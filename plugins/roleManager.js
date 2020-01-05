@@ -9,7 +9,7 @@ module.exports = async function() {
 		_queryAsync: promisify(dbconn.query).bind(dbconn),
 		get: async (k) => { return await cache._queryAsync("SELECT * FROM cache WHERE k=?", [k]) },
 		set: async (k, v) => { await cache._queryAsync("INSERT INTO cache SET ?", {k: k, val: v})}
-	}
+	};
 
 	const readyEvent = async () => {
 		const guild = client.guilds.get(guild_id);
@@ -21,7 +21,7 @@ module.exports = async function() {
 				"To remove a role click the reaction again.\n*If roles don't work, try to remove and re-add the role, or contact a moderator.*\n\n" +
 				reactRoles.map(({id, rct, title, desc}) => `${rct} = <@&${id}> ${desc}`).join('\n\n') + "\n\n" +
 				"In order to get access to the <@&525433828806885386> channel you must agree that you:\n- Are above the age of 18\n- Read and understood <#463464079126691870>\n- Understand that you may be banned if you are caught lying\n\n" +
-				"* If you understand the consequences and agree, type `i agree nsfw` in <#463857799642742794>.",
+				"* If you understand the consequences and agree, type `i agree nsfw` in <#463857799642742794>."
 		};
 
 		const rmm = "role-manager-message";
