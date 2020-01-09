@@ -2,7 +2,7 @@ const {promisify} = require('util');
 
 module.exports = async function() {
 	const { client, config, dbconn, guild_id, events } = this;
-	// if (config.development) return;
+	if (config.development) return;
 
 	const _queryAsync = promisify(dbconn.query).bind(dbconn);
 
