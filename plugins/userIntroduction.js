@@ -1,8 +1,9 @@
 const {promisify} = require('util');
+const Vibrant = require('node-vibrant');
 
 module.exports = async function() {
 	const { client, config, dbconn, events, channels, guild_id } = this;
-	// if (config.development) return;
+	if (config.development) return;
 
 	const cache = {
 		_queryAsync: promisify(dbconn.query).bind(dbconn),
@@ -94,8 +95,48 @@ module.exports = async function() {
 				break;
 			case (5):
 				await cache._queryAsync("UPDATE UserIntro SET about=? WHERE uid=?", [message.cleanContent, message.author.id]); // TODO: replace with global queryAsync
+				let palette = await Vibrant.from(message.author.displayAvatarURL).getPalette();
+
+				const embed = {
+					color: parseInt(palette.Vibrant.hex.replace(/^#/, ''), 16),
+					author: {
+						name: message.author.tag,
+						icon_url: message.author.displayAvatarURL
+					},
+					thumbnail: {
+						url: message.author.displayAvatarURL
+					},
+					fields: [
+						{
+							name: "Name",
+							value: introSelect[0].name,
+							inline: true
+						},
+						{
+							name: "Location",
+							value: introSelect[0].country,
+							inline: true
+						},
+						{
+							name: "Age",
+							value: introSelect[0].age,
+							inline: true
+						},
+						{
+							name: "Gender",
+							value: introSelect[0].gender
+						},
+						{
+							name: "About Me",
+							value: message.cleanContent
+						}
+					]
+				}
+
+				channels.introduction.send({embed});
 				await message.author.send(`Thank you ${introSelect[0].name}! Your introduction has been posted in <#654079528658010137> :heart:`);
 				break;
+			default: return;
 		}
 
 		await cache._queryAsync("UPDATE UserIntro SET `index`=`index`+1 WHERE uid=?", [message.author.id]); // TODO: replace with global queryAsync
