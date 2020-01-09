@@ -12,8 +12,6 @@ module.exports = async function() {
 	};
 
 	const readyEvent = async () => {
-		const guild = client.guilds.get(guild_id);
-
 		const embed = {
 			color: 0xfc8090,
 			title: "Introduce yourself to the server!",
@@ -131,7 +129,7 @@ module.exports = async function() {
 							value: message.cleanContent
 						}
 					]
-				}
+				};
 
 				channels.introduction.send({embed});
 				await message.author.send(`Thank you ${introSelect[0].name}! Your introduction has been posted in <#654079528658010137> :heart:`);
