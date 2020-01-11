@@ -2,13 +2,12 @@ const {promisify} = require('util');
 const Vibrant = require('node-vibrant');
 
 module.exports = async function() {
-	const { client, config, dbconn, events, channels, guild_id } = this;
+	const { client, config, dbquery, events, channels, guild_id } = this;
 	if (config.development) return;
 
 	const cache = {
-		_queryAsync: promisify(dbconn.query).bind(dbconn),
-		get: async (k) => { return await cache._queryAsync("SELECT * FROM cache WHERE k=?", [k]) },
-		set: async (k, v) => { await cache._queryAsync("INSERT INTO cache SET ?", {k: k, val: v})}
+		get: async (k) => { return await dbquery("SELECT * FROM cache WHERE k=?", [k]) },
+		set: async (k, v) => { await dbquery("INSERT INTO cache SET ?", {k: k, val: v})}
 	};
 
 	const readyEvent = async () => {
@@ -49,15 +48,15 @@ module.exports = async function() {
 	events.attach("post-ready", readyEvent);
 	events.attach("messageReactionAdd", async (reaction, user) => {
 		if (user.id == client.user.id) return; // don't handle reaction from bot
-		if ((await cache._queryAsync("SELECT * FROM UserIntro WHERE uid=?", [user.id])).length > 0) return;
+		if ((await dbquery("SELECT * FROM UserIntro WHERE uid=?", [user.id])).length > 0) return;
 		await user.send("Welcome to Spooky's Forest! Would you like to introduce yourself? Say **yes** to get started! :heart:");
-		await cache._queryAsync("INSERT IGNORE INTO UserIntro SET ?", {uid: user.id}); // TODO: replace with global queryAsync
+		await dbquery("INSERT IGNORE INTO UserIntro SET ?", {uid: user.id});
 	});
 	events.attach("message", async (message) => {
 		if (message.channel.type !== "dm") return;
 		if (message.author == client.user) return;
 
-		let introSelect = await cache._queryAsync("SELECT * FROM UserIntro WHERE uid=?", [message.author.id]); // TODO: replace with global queryAsync
+		let introSelect = await dbquery("SELECT * FROM UserIntro WHERE uid=?", [message.author.id]);
 		if (introSelect.length == 0) return;
 		let introIndex = introSelect[0].index;
 
@@ -67,11 +66,11 @@ module.exports = async function() {
 				await message.author.send("Alright. What's your name?"); // send next step
 				break;
 			case (1):
-				await cache._queryAsync("UPDATE UserIntro SET name=? WHERE uid=?", [message.cleanContent, message.author.id]); // TODO: replace with global queryAsync
+				await dbquery("UPDATE UserIntro SET name=? WHERE uid=?", [message.cleanContent, message.author.id]);
 				await message.author.send(`What country are you from, ${message.cleanContent}?`);
 				break;
 			case (2):
-				await cache._queryAsync("UPDATE UserIntro SET country=? WHERE uid=?", [message.cleanContent, message.author.id]); // TODO: replace with global queryAsync
+				await dbquery("UPDATE UserIntro SET country=? WHERE uid=?", [message.cleanContent, message.author.id]);
 				await message.author.send("What's your gender? `(male, female, other)`");
 				break;
 			case (3):
@@ -80,7 +79,7 @@ module.exports = async function() {
 					await message.author.send("Sorry, that's not a valid option.");
 					return;
 				}
-				await cache._queryAsync("UPDATE UserIntro SET gender=? WHERE uid=?", [txt.charAt(0).toUpperCase()+txt.slice(1), message.author.id]); // TODO: replace with global queryAsync
+				await dbquery("UPDATE UserIntro SET gender=? WHERE uid=?", [txt.charAt(0).toUpperCase()+txt.slice(1), message.author.id]);
 				await message.author.send("Cool! How old are you?");
 				break;
 			case (4):
@@ -88,11 +87,11 @@ module.exports = async function() {
 					await message.author.send("Sorry, that's not a valid age.");
 					return;
 				}
-				await cache._queryAsync("UPDATE UserIntro SET age=? WHERE uid=?", [message.cleanContent, message.author.id]); // TODO: replace with global queryAsync
+				await dbquery("UPDATE UserIntro SET age=? WHERE uid=?", [message.cleanContent, message.author.id]);
 				await message.author.send("Lastly, tell us about yourself! Do you have any hobbies/interests?");
 				break;
 			case (5):
-				await cache._queryAsync("UPDATE UserIntro SET about=? WHERE uid=?", [message.cleanContent, message.author.id]); // TODO: replace with global queryAsync
+				await dbquery("UPDATE UserIntro SET about=? WHERE uid=?", [message.cleanContent, message.author.id]);
 				let palette = await Vibrant.from(message.author.displayAvatarURL).getPalette();
 
 				const embed = {
@@ -137,6 +136,6 @@ module.exports = async function() {
 			default: return;
 		}
 
-		await cache._queryAsync("UPDATE UserIntro SET `index`=`index`+1 WHERE uid=?", [message.author.id]); // TODO: replace with global queryAsync
+		await dbquery("UPDATE UserIntro SET `index`=`index`+1 WHERE uid=?", [message.author.id]);
 	});
 }

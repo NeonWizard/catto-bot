@@ -1,4 +1,5 @@
 const {Client} = require("discord.js");
+const {promisify} = require('util');
 const fs = require("fs");
 const path = require("path");
 const mysql = require("mysql");
@@ -21,6 +22,7 @@ const BotEnv = class {
 			password	: config.dbpass,
 			database	: 'discordbot'
 		});
+		this.dbquery = promisify(this.dbconn.query).bind(this.dbconn);
 
 		this.plugins = new Map();
 		this.events = new Map();

@@ -1,14 +1,13 @@
 const {promisify} = require('util');
 
 module.exports = async function() {
-	const { client, events, dbconn, channels, guild_id, roles, config } = this;
+	const { client, events, dbquery, channels, guild_id, roles, config } = this;
 	const { reactRoles, rcs } = config;
 	if (config.development) return;
 
 	const cache = {
-		_queryAsync: promisify(dbconn.query).bind(dbconn),
-		get: async (k) => { return await cache._queryAsync("SELECT * FROM cache WHERE k=?", [k]) },
-		set: async (k, v) => { await cache._queryAsync("INSERT INTO cache SET ?", {k: k, val: v})}
+		get: async (k) => { return await dbquery("SELECT * FROM cache WHERE k=?", [k]) },
+		set: async (k, v) => { await dbquery("INSERT INTO cache SET ?", {k: k, val: v})}
 	};
 
 	const readyEvent = async () => {
