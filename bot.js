@@ -60,6 +60,11 @@ const BotEnv = class {
 			if (this.config.debug) print(`Added ${name} to the ${type}s object [${type_id}]`);
 		}
 
+		// - bulk delete spammer's messages
+		// for (var channel of this.client.guilds.get(this.guild_id).channels.filter(c => c.type == "text").array()) {
+		// 	channel.fetchMessages().then(messages => messages.filter(m => m.author.id === "603024509951541249")).then(messages => messages.forEach(m => m.delete()));
+		// }
+
 		print("LOGIN COMPLETE :: Emitting 'post-ready'...");
 		this.client.emit("post-ready");
 	}
