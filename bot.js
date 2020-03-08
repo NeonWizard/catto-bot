@@ -62,7 +62,21 @@ const BotEnv = class {
 
 		// - bulk delete spammer's messages
 		// for (var channel of this.client.guilds.get(this.guild_id).channels.filter(c => c.type == "text").array()) {
-		// 	channel.fetchMessages().then(messages => messages.filter(m => m.author.id === "603024509951541249")).then(messages => messages.forEach(m => m.delete()));
+		// 	var messages = [];
+		// 	var last_id;
+
+		// 	for (var i = 0; i < 10; i++) {
+		// 		const options = { limit: 100 };
+		// 		if (last_id) {
+		// 			options.before = last_id;
+		// 		}
+
+		// 		const mtmp = await channel.fetchMessages(options);
+		// 		messages.push(...mtmp.array());
+		// 		last_id = mtmp.last().id;
+		// 	}
+
+		// 	messages.filter(m => m.author.id === "603024509951541249").forEach(m => m.delete());
 		// }
 
 		print("LOGIN COMPLETE :: Emitting 'post-ready'...");
