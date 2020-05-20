@@ -35,6 +35,7 @@ module.exports = async function() {
 				icon_url: client.user.avatarURL
 			}
 		};
+
 		await channels.staff_logs.send({embed});
 	};
 
@@ -43,29 +44,58 @@ module.exports = async function() {
 		const channel = message.channel;
 		if (author.id == client.user.id) return;
 
-		const embed = {
-			color: 0xff3539,
-			author: {
-				name: author.tag,
-				icon_url: author.avatarURL
-			},
-			description: `**${author.tag}** deleted their message.`,
-			fields: [
-				{
-					name: "Channel",
-					value: `${channel.toString()} (${channel.name})`
+		let embed;
+		if (message.attachments.size == 0) {
+			// normal text deletion
+			embed = {
+				color: 0xff3539,
+				author: {
+					name: author.tag,
+					icon_url: author.avatarURL
 				},
-				{
-					name: "Message",
-					value: message.content || "*[empty message]*"
+				description: `**${author.tag}** deleted their message.`,
+				fields: [
+					{
+						name: "Channel",
+						value: `${channel.toString()} (${channel.name})`
+					},
+					{
+						name: "Message",
+						value: message.content || "*[empty message]*"
+					}
+				],
+				timestamp: new Date(),
+				footer: {
+					text: client.user.tag,
+					icon_url: client.user.avatarURL
 				}
-			],
-			timestamp: new Date(),
-			footer: {
-				text: client.user.tag,
-				icon_url: client.user.avatarURL
+			}
+		} else {
+			// media deletion
+			embed = {
+				color: 0xff3539,
+				author: {
+					name: author.tag,
+					icon_url: author.avatarURL
+				},
+				description: `**${author.tag}** deleted their message.`,
+				fields: [
+					{
+						name: "Channel",
+						value: `${channel.toString()} (${channel.name})`
+					}
+				],
+				image: {
+					url: (message.attachments.first() || {proxyURL: ""}).proxyURL
+				},
+				timestamp: new Date(),
+				footer: {
+					text: client.user.tag,
+					icon_url: client.user.avatarURL
+				}
 			}
 		}
+
 		await channels.staff_logs.send({embed});
 	};
 
