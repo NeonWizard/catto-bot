@@ -74,7 +74,7 @@ module.exports = async function() {
 				await message.author.send("What's your gender? `(male, female, other)`");
 				break;
 			case (3):
-				let txt = message.cleanContent.toLowerCase();
+				var txt = message.cleanContent.toLowerCase();
 				if (!["male", "female", "other"].includes(txt)) {
 					await message.author.send("Sorry, that's not a valid option.");
 					return;
@@ -92,46 +92,61 @@ module.exports = async function() {
 				break;
 			case (5):
 				await dbquery("UPDATE UserIntro SET about=? WHERE uid=?", [message.cleanContent, message.author.id]);
-				let palette = await Vibrant.from(message.author.displayAvatarURL).getPalette();
+				await message.author.send("Great! If you believe your information is correct, type `confirm`. Otherwise, type `restart`.");
+				break;
+			case (6):
+				var txt = message.cleanContent.toLowerCase();
+				if (!["confirm", "restart"].includes(txt)) {
+					await message.author.send("Sorry, that's not a valid option.");
+					return;
+				}
 
-				const embed = {
-					color: parseInt(palette.Vibrant.hex.replace(/^#/, ''), 16),
-					author: {
-						name: message.author.tag,
-						icon_url: message.author.displayAvatarURL
-					},
-					thumbnail: {
-						url: message.author.displayAvatarURL
-					},
-					fields: [
-						{
-							name: "Name",
-							value: introSelect[0].name,
-							inline: true
-						},
-						{
-							name: "Location",
-							value: introSelect[0].country,
-							inline: true
-						},
-						{
-							name: "Age",
-							value: introSelect[0].age,
-							inline: true
-						},
-						{
-							name: "Gender",
-							value: introSelect[0].gender
-						},
-						{
-							name: "About Me",
-							value: message.cleanContent
-						}
-					]
-				};
+				if (txt == "restart") {
+					await dbquery("UPDATE UserIntro SET `index`=0 WHERE uid=?", [message.author.id]);
+					await message.author.send("Welcome to Spooky's Forest! Would you like to introduce yourself? Say **yes** to get started! :heart:"); // TODO: store text in variable
+					return;
+				} else {
+					let palette = await Vibrant.from(message.author.displayAvatarURL).getPalette();
 
-				channels.introduction.send({embed});
-				await message.author.send(`Thank you ${introSelect[0].name}! Your introduction has been posted in <#654079528658010137> :heart:`);
+					const embed = {
+						color: parseInt(palette.Vibrant.hex.replace(/^#/, ''), 16),
+						author: {
+							name: message.author.tag,
+							icon_url: message.author.displayAvatarURL
+						},
+						thumbnail: {
+							url: message.author.displayAvatarURL
+						},
+						fields: [
+							{
+								name: "Name",
+								value: introSelect[0].name,
+								inline: true
+							},
+							{
+								name: "Location",
+								value: introSelect[0].country,
+								inline: true
+							},
+							{
+								name: "Age",
+								value: introSelect[0].age,
+								inline: true
+							},
+							{
+								name: "Gender",
+								value: introSelect[0].gender
+							},
+							{
+								name: "About Me",
+								value: introSelect[0].about
+							}
+						]
+					};
+
+					channels.introduction.send({embed});
+					await message.author.send(`Thank you ${introSelect[0].name}! Your introduction has been posted in <#654079528658010137> :heart:`);
+				}
 				break;
 			default: return;
 		}
