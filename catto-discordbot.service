@@ -2,11 +2,13 @@
 Description=Catto Discord Bot
 After=multi-user.target
 OnFailure=unit-status-telegram@%n.service
+StartLimitBurst=3
+StartLimitIntervalSec=300
 
 [Service]
 WorkingDirectory=$(pwd)
 ExecStart=npm start
-Restart=always
+Restart=on-failure
 RestartSec=10
 Type=simple
 
