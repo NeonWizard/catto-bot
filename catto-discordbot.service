@@ -1,0 +1,14 @@
+[Unit]
+Description=Catto Discord Bot
+After=multi-user.target
+OnFailure=unit-status-telegram@%n.service
+
+[Service]
+WorkingDirectory=$(pwd)
+ExecStart=npm start
+Restart=always
+RestartSec=10
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
