@@ -17,8 +17,8 @@ const BotEnv = class {
 		this.client = client;
 
 		this.dbconn = mysql.createPool({
-			host		: 'deadtired.me',
-			user		: 'root',
+			host		: 'localhost',
+			user		: 'cattobot',
 			password	: config.dbpass,
 			database	: 'discordbot'
 		});
