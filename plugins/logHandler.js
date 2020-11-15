@@ -7,6 +7,7 @@ module.exports = async function() {
 		const channel = newMessage.channel;
 		if (author.id == client.user.id) return;
 		if (oldMessage.content == newMessage.content) return;
+		if (oldMessage.channel.type == "dm") return;
 
 		const embed = {
 			color: 0xefefef,
@@ -43,6 +44,7 @@ module.exports = async function() {
 		const author = message.author;
 		const channel = message.channel;
 		if (author.id == client.user.id) return;
+		if (message.channel.type == "dm") return;
 
 		let embed;
 		if (message.attachments.size == 0) {
