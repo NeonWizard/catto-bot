@@ -8,13 +8,13 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceFolder}\\bot.js"
+            "program": "${workspaceFolder}/bot.js"
         },
         {
             "type": "node",
             "request": "launch",
             "name": "Launch Program Debug",
-            "program": "${workspaceFolder}\\bot.js",
+            "program": "${workspaceFolder}/bot.js",
             "env": {
                 "DEVELOPMENT": "true"
             }
