@@ -11,7 +11,7 @@ module.exports = async function() {
 	};
 
 	const readyEvent = async () => {
-		const guild = client.guilds.get(guild_id);
+		const guild = client.guilds.cache.get(guild_id);
 
 		const embed = {
 			color: 0xfc8090,
@@ -55,13 +55,13 @@ module.exports = async function() {
 	const reactionHandler = async (reaction, user, action) => {
 		if (user.id == client.user.id) return; // don't apply reaction roles to bot
 
-		const guild = client.guilds.get(guild_id);
-		const member = guild.members.get(user.id);
+		const guild = client.guilds.cache.get(guild_id);
+		const member = guild.members.cache.get(user.id);
 
 		const rct = reactRoles.filter(({rct}) => rct === reaction.emoji.toString())[0];
 
 		if (rct) {
-			const role = guild.roles.get(rct.id);
+			const role = guild.roles.cache.get(rct.id);
 			if (action === "add") member.addRole(role);
 			if (action === "remove") member.removeRole(role);
 		}

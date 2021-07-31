@@ -55,33 +55,19 @@ const BotEnv = class {
 	async start() {
 		await this.client.login(this.config.token);
 
-		for (const [type, name, type_id] of this.type_ids) {
-			this[type+"s"][name] = this.client.guilds.get(this.guild_id)[type+"s"].get(type_id);
-			if (this.config.debug) print(`Added ${name} to the ${type}s object [${type_id}]`);
-		}
-
-		// - bulk delete spammer's messages
-		// for (var channel of this.client.guilds.get(this.guild_id).channels.filter(c => c.type == "text").array()) {
-		// 	var messages = [];
-		// 	var last_id;
-
-		// 	for (var i = 0; i < 10; i++) {
-		// 		const options = { limit: 100 };
-		// 		if (last_id) {
-		// 			options.before = last_id;
-		// 		}
-
-		// 		const mtmp = await channel.fetchMessages(options);
-		// 		messages.push(...mtmp.array());
-		// 		last_id = mtmp.last().id;
-		// 	}
-
-		// 	messages.filter(m => m.author.id === "603024509951541249").forEach(m => m.delete());
-		// }
-
 		print("LOGIN COMPLETE :: Emitting 'post-ready'...");
 		this.client.emit("post-ready");
 	}
+
+  onReady() {
+    const guild = this.client.guilds.cache.get(this.guild_id);
+		for (const [type, name, type_id] of this.type_ids) {
+      const t = type+"s";
+      const thingOfType = guild[t].cache.get(type_id);
+			this[t][name] = thingOfType;
+			if (this.config.debug) print(`Added ${name} to the ${type}s object [${type_id}]`);
+		}
+  }
 
 	static async requirePlugin(rawPluginName) {
 		const pluginName = rawPluginName.replace(/(\.js)/i, '');
@@ -116,14 +102,16 @@ const BotEnv = class {
 	}
 
     async readyEvents() {
-        this.events.forEach((events, eventName) => {
-            const listener = (...eventArgs) => {
-                for (const event of events) event.bind(this.client)(...eventArgs);
-            };
-            this.registeredEvents.set(eventName, listener);
-            this.client.on(eventName, listener);
-            if (this.config.debug) print(`Event [${eventName}] loaded with [${events.length}] events attached.`)
-        });
+      this.client.on('ready', this.onReady.bind(this));
+
+      this.events.forEach((events, eventName) => {
+        const listener = (...eventArgs) => {
+          for (const event of events) event.bind(this.client)(...eventArgs);
+        };
+        this.registeredEvents.set(eventName, listener);
+        this.client.on(eventName, listener);
+        if (this.config.debug) print(`Event [${eventName}] loaded with [${events.length}] events attached.`)
+      });
     }
 
 	async readyPlugins() {

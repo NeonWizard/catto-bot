@@ -5,7 +5,7 @@ module.exports = async function() {
 	if (config.development) return;
 
 	// const readyEvent = async () => {
-	// 	const guild = client.guilds.get(guild_id);
+	// 	const guild = client.guilds.cache.get(guild_id);
 
 	// 	for (const [id, member] of guild.members.entries()) {
 	// 		await dbquery("INSERT IGNORE INTO User SET ?", {id: id, initialJoinDate: member.joinedAt});
