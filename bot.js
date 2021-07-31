@@ -44,12 +44,11 @@ const BotEnv = class {
 			await wait(3000);
 		}
 
+    this.client.on('ready', this.onReady.bind(this));
+
 		await this.preparePlugins();
 		await this.readyPlugins();
 		await this.readyDatabase();
-
-		// After plugins are ready, any events that should have been attached will have been attached once you run the plugin (readyPlugins())
-		await this.readyEvents();
 	}
 
 	async start() {
@@ -57,6 +56,9 @@ const BotEnv = class {
 
 		print("LOGIN COMPLETE :: Emitting 'post-ready'...");
 		this.client.emit("post-ready");
+
+    // After plugins are ready, any events that should have been attached will have been attached once you run the plugin (readyPlugins())
+		await this.readyEvents();
 	}
 
   onReady() {
@@ -101,18 +103,16 @@ const BotEnv = class {
 		print("Plugins prepared.");
 	}
 
-    async readyEvents() {
-      this.client.on('ready', this.onReady.bind(this));
-
-      this.events.forEach((events, eventName) => {
-        const listener = (...eventArgs) => {
-          for (const event of events) event.bind(this.client)(...eventArgs);
-        };
-        this.registeredEvents.set(eventName, listener);
-        this.client.on(eventName, listener);
-        if (this.config.debug) print(`Event [${eventName}] loaded with [${events.length}] events attached.`)
-      });
-    }
+  async readyEvents() {
+    this.events.forEach((events, eventName) => {
+      const listener = (...eventArgs) => {
+        for (const event of events) event.bind(this.client)(...eventArgs);
+      };
+      this.registeredEvents.set(eventName, listener);
+      this.client.on(eventName, listener);
+      if (this.config.debug) print(`Event [${eventName}] loaded with [${events.length}] events attached.`)
+    });
+  }
 
 	async readyPlugins() {
 		// Run the plugin functions so events are placed in the client object.
